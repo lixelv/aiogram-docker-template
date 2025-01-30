@@ -1,0 +1,48 @@
+services:
+    app:
+        build: .
+        container_name: ${APP_NAME:-my-app}
+        env_file: .env
+        environment:
+            - POSTGRES_HOST=${POSTGRES_HOST:-postgres-db}
+            - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+        depends_on:
+            db:
+                condition: service_healthy
+        volumes:
+            - files:/docker/
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -h $${POSTGRES_HOST:-postgres-db} -p $${POSTGRES_PORT:-5432} -d $${POSTGRES_DB} -U $${POSTGRES_USER}",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    db:
+        image: postgres:16
+        container_name: postgres-db
+        env_file: .env
+        ports:
+            - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "pg_isready",
+                    "-U",
+                    "${POSTGRES_USER}",
+                    "-d",
+                    "${POSTGRES_DB}",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    postgres_data:
+    files:
