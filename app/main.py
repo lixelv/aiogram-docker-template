@@ -17,10 +17,7 @@ dp.include_router(router)
 
 async def main():
     async with sql:
-        try:
-            dp.run_polling(bot)
-        except KeyboardInterrupt:
-            return
+        await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
