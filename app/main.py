@@ -1,10 +1,12 @@
 import asyncio
-
 from aiogram import Bot, Dispatcher
-from router import router
 
+from router import router
+from logger import setup_logging
 from config import TELEGRAM_BOT_TOKEN, sql
 from middlewares import UserCheckMiddleware
+
+setup_logging()
 
 # Initialize bot and dispatcher
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
