@@ -1,4 +1,4 @@
-name: dev_{APP_NAME:-PWD##*/}
+name: dev_${APP_NAME:-PWD##*/}
 
 services:
     app:

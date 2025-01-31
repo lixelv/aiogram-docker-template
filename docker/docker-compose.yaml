@@ -1,11 +1,12 @@
-name: {APP_NAME:-PWD##*/}
+name: ${APP_NAME:-PWD##*/}
 
 services:
     app:
         build:
+            context: ..
             dockerfile: docker/Dockerfile.prod
-        container_name: ${APP_NAME:-my-app}
-        env_file: .env
+        container_name: ${APP_NAME:-PWD##*/}
+        env_file: ../.env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-host.docker.internal}
             - POSTGRES_PORT=${POSTGRES_PORT:-5432}

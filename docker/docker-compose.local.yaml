@@ -1,11 +1,12 @@
-name: {APP_NAME:-PWD##*/}
+name: ${APP_NAME:-PWD##*/}
 
 services:
     app:
         build:
+            context: ..
             dockerfile: docker/Dockerfile.prod
         container_name: ${APP_NAME:-PWD##*/}
-        env_file: .env
+        env_file: ../.env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-db}
             - POSTGRES_PORT=${POSTGRES_PORT:-5432}
@@ -30,7 +31,7 @@ services:
     db:
         image: postgres:16
         container_name: postgres_db
-        env_file: .env
+        env_file: ../.env
         environment:
             - DB_USER=${POSTGRES_USER}
             - DB_PASS=${POSTGRES_PASSWORD}
