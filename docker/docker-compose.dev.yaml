@@ -2,7 +2,8 @@ name: dev_{APP_NAME:-PWD##*/}
 
 services:
     app:
-        build: .
+        build:
+            dockerfile: docker/Dockerfile.dev
         container_name: dev_${APP_NAME:-PWD##*/}
         env_file: .env
         environment:
