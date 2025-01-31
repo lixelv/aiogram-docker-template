@@ -15,6 +15,4 @@ DATABASE_CONFIG = {
     "database": os.getenv("POSTGRES_DB"),
 }
 
-print(DATABASE_CONFIG)
-
 sql = PostgresDB(DATABASE_CONFIG)
