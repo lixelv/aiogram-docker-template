@@ -1,7 +1,9 @@
+name: dev_{APP_NAME:-PWD##*/}
+
 services:
     app:
         build: .
-        container_name: ${APP_NAME:-my-app}
+        container_name: dev_${APP_NAME:-PWD##*/}
         env_file: .env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-db}
@@ -10,7 +12,8 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - files:/docker/
+            - dev_code:/app
+            - dev_files:/docker
         healthcheck:
             test:
                 [
@@ -26,7 +29,7 @@ services:
 
     db:
         image: postgres:16
-        container_name: postgres_db
+        container_name: dev_postgres_db
         env_file: .env
         environment:
             - DB_USER=${POSTGRES_USER}
@@ -39,7 +42,7 @@ services:
             - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
 
         volumes:
-            - postgres_data:/data/postgres
+            - dev_postgres_data:/data/postgres
         healthcheck:
             test:
                 [
@@ -54,5 +57,6 @@ services:
         tty: true
 
 volumes:
-    postgres_data:
-    files:
+    dev_code:
+    dev_postgres_data:
+    dev_files:

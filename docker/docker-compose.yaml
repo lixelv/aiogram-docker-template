@@ -1,3 +1,5 @@
+name: {APP_NAME:-PWD##*/}
+
 services:
     app:
         build: .
@@ -7,7 +9,7 @@ services:
             - POSTGRES_HOST=${POSTGRES_HOST:-host.docker.internal}
             - POSTGRES_PORT=${POSTGRES_PORT:-5432}
         volumes:
-            - files:/docker/
+            - files:/docker
         healthcheck:
             test:
                 [
