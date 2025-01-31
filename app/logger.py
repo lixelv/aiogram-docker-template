@@ -4,29 +4,29 @@ from config import APP_NAME
 
 
 def setup_logging():
-    # Убедимся, что директория для логов существует
+    # Make sure the logging directory exists
     logs_dir = "/docker"
     os.makedirs(logs_dir, exist_ok=True)
 
-    # Файл для логов
+    # File for the logs
     logs_path = os.path.join(logs_dir, f"{APP_NAME}.txt")
 
-    # Создаём корневой логгер
+    # Create a root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
 
-    # Форматтеры
+    # Formatters
     console_formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
     file_formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
 
-    # Консольный логгер
+    # Console logger
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(console_formatter)
     root_logger.addHandler(console_handler)
 
-    # Файловый логгер
+    # File logger
     try:
         file_handler = logging.FileHandler(logs_path, encoding="utf-8")
         file_handler.setFormatter(file_formatter)
@@ -34,9 +34,9 @@ def setup_logging():
     except Exception as e:
         logging.error(f"Error trying to create log file: {e}")
 
-    # Логируем aiogram (если используешь его)
+    # Logging aiogram (if you are using it)
     logging.getLogger("aiogram").setLevel(logging.INFO)
 
-    # Логируем предупреждения Python
+    # Log Python warnings
     logging.captureWarnings(True)
-    logging.info("Logging is complited!")
+    logging.info("Logging is complained!")

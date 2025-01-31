@@ -22,9 +22,11 @@ class UserCheckMiddleware(DatabaseRelatedMiddleware):
         event: Message,
         data: Dict[str, Any],
     ) -> Any:
-        user = await self.db.create_user_if_not_exists(
-            event.from_user.id, event.from_user.username, event.from_user.full_name
-        )
+        if not await self.db.user_exists(event.from_user.id):
+            await self.db.create_user(
+                event.from_user.id,
+                event.from_user.username,
+                event.from_user.full_name,
+            )
 
-        data["user"] = user
         return await handler(event, data)

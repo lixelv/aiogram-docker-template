@@ -19,7 +19,7 @@ dp.include_router(router)
 
 async def main():
     async with sql:
-        await dp.start_polling(bot)
+        await dp.start_polling(bot, skip_updates=True)
 
 
 if __name__ == "__main__":

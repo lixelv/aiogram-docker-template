@@ -1,5 +1,6 @@
 import asyncpg
 from typing import Optional
+from utils import timer
 
 
 class PostgresDB:
@@ -35,10 +36,16 @@ class PostgresDB:
             """
         )
 
-    async def do(self, sql: str, values=None) -> None:
+    async def do(self, sql: str, values=None, transaction=False) -> None:
         await self.connect()
         async with self.pool.acquire() as conn:
-            async with conn.transaction():
+            if transaction:
+                async with conn.transaction():
+                    if values:
+                        await conn.execute(sql, *values)
+                    else:
+                        await conn.execute(sql)
+            else:
                 if values:
                     await conn.execute(sql, *values)
                 else:
@@ -52,16 +59,13 @@ class PostgresDB:
                 return dict(rows[0]) if rows else None
             return [dict(r) for r in rows]
 
-    async def create_user_if_not_exists(
-        self, user_id: int, username: str, full_name: str
-    ) -> None:
-        sql = """
-            INSERT INTO users (id, username, full_name)
-            VALUES ($1, $2, $3)
-            ON CONFLICT (id) DO NOTHING
-            RETURNING *
-        """
+    async def create_user(self, user_id: int, username: str, full_name: str) -> None:
+        sql = "INSERT INTO users (id, username, full_name) VALUES ($1, $2, $3)"
         await self.do(sql, (user_id, username, full_name))
+
+    async def user_exists(self, user_id: int) -> bool:
+        sql = "SELECT * FROM users WHERE id=$1"
+        return bool(await self.read(sql, (user_id,), one=True))
 
     async def get_user(self, user_id: int) -> Optional[dict]:
         sql = "SELECT * FROM users WHERE id=$1"
