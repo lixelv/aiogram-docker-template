@@ -12,15 +12,6 @@ services:
             - POSTGRES_PORT=${POSTGRES_PORT:-5432}
         volumes:
             - files:/docker
-        healthcheck:
-            test:
-                [
-                    "CMD-SHELL",
-                    "pg_isready -h $${POSTGRES_HOST:-db} -p $${POSTGRES_PORT:-5432} -d $${POSTGRES_DB} -U $${POSTGRES_USER}",
-                ]
-            interval: 5s
-            timeout: 5s
-            retries: 5
 
         restart: unless-stopped
         tty: true
