@@ -28,6 +28,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: build
     steps:
       - name: Setup working directory
         run: |
