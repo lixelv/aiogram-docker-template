@@ -1,6 +1,5 @@
 import asyncpg
 from typing import Optional
-from utils import timer
 
 
 class PostgresDB:

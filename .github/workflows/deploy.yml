@@ -1,38 +1,32 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
+    build:
+        runs-on: self-hosted
 
-  build:
-    runs-on: self-hosted
+        steps:
+            - name: Build
+              run: |
+                  REPO_NAME=$(basename ${{ github.repository }})
+                  cd /root/github/$REPO_NAME
+                  git pull
+                  source .env
+                  docker compose --env-file .env -f docker/docker-compose.local.yaml build
 
-    steps:
-    - name: Setup working directory
-      run: |
-        REPO_NAME=$(basename ${{ github.repository }})
-        cd /root/github/$REPO_NAME
-
-    - name: Get actual git repo
-      run: git pull
-
-    - name: Setup .env
-      run: source .env
-
-    - name: Build
-      run: docker compose --env-file .env -f docker/docker-compose.local.yaml build
-
-  deploy:
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - name: Setup working directory
-        run: |
-          REPO_NAME=$(basename ${{ github.repository }})
-          cd /root/github/$REPO_NAME
-      - name: Deploy
-        run: docker compose --env-file .env -f docker/docker-compose.local.yaml up -d
+    deploy:
+        runs-on: self-hosted
+        needs: build
+        steps:
+            - name: Deploy
+              run: |
+                  REPO_NAME=$(basename ${{ github.repository }})
+                  cd /root/github/$REPO_NAME
+                  git pull
+                  source .env
+                  docker compose --env-file .env -f docker/docker-compose.local.yaml up -d
