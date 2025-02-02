@@ -43,14 +43,14 @@ The template supports three deployment modes:
 1. Create new repository from existing template
 2. Setup local hosted runner for GitHub Actions:
 
-    - Goto https://github.com/<your_username>/<your_repo>/settings/actions/runners/new?arch=x64&os=linux
+    - Goto https://github.com/your_username/your_repo/settings/actions/runners/new?arch=x64&os=linux (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
     - Create new local runner on your machine
     - Use screen or other terminal multiplexer to run `./run.sh` file
     - Download docker and docker compose if they are not installed
 
 3. Create environment for your bot:
 
-    - Goto https://github.com/<your_username>/<your_repo>/settings/environments/new
+    - Goto https://github.com/your_username/your_repo/settings/environments/new (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
     - In name write `production` and continue
     - In environment secrets write environment variables. Here is list of them:
         - `TELEGRAM_BOT_TOKEN`: Your bot token, get it from [@BotFather](https://t.me/BotFather)
@@ -63,5 +63,5 @@ The template supports three deployment modes:
     - All variables are required!
 
 4. Start bot:
-    - Goto https://github.com/<your_username>/<your_repo>/actions/workflows/deploy.yml
+    - Goto https://github.com/your_username/your_repo/actions/workflows/deploy.yml (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
     - Press Run workflow and start your bot!
