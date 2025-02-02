@@ -1,32 +1,41 @@
-name: Docker Image CI
+name: Deploy
 
 on:
     push:
         branches: ["main"]
-    pull_request:
-        branches: ["main"]
+    workflow_dispatch:
 
 jobs:
     build:
         runs-on: self-hosted
+        environment: production
 
         steps:
-            - name: Build
+            - uses: actions/checkout@v3
+            - name: Generate .env file
               run: |
-                  REPO_NAME=$(basename ${{ github.repository }})
-                  cd /root/github/$REPO_NAME
-                  git pull
-                  source .env
-                  docker compose --env-file .env -f docker/docker-compose.local.yaml build
+                  echo "APP_NAME=${{ github.repository }}" >> .env
+                  echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+                  echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+                  echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+                  echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+                  echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+                  echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+                  echo "DEPLOY_MODE=${{ secrets.DEPLOY_MODE }}" >> .env
+
+            - name: Build and push Docker image
+              run: |
+                  docker compose --env-file .env -f docker/docker-compose.$DEPLOY_MODE.yaml build
+              env:
+                  DEPLOY_MODE: ${{ secrets.DEPLOY_MODE }}
 
     deploy:
         runs-on: self-hosted
         needs: build
+        environment: production
         steps:
             - name: Deploy
               run: |
-                  REPO_NAME=$(basename ${{ github.repository }})
-                  cd /root/github/$REPO_NAME
-                  git pull
-                  source .env
-                  docker compose --env-file .env -f docker/docker-compose.local.yaml up -d
+                  docker compose --env-file .env -f docker/docker-compose.$DEPLOY_MODE.yaml up -d
+              env:
+                  DEPLOY_MODE: ${{ secrets.DEPLOY_MODE }}
