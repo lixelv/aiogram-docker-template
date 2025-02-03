@@ -5,7 +5,7 @@ services:
         build:
             context: ..
             dockerfile: docker/Dockerfile.prod
-        container_name: ${APP_NAME:-PWD##*/}
+        container_name: ${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-db}
@@ -14,14 +14,14 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - files:/docker
+            - files:/files
 
         restart: unless-stopped
         tty: true
 
     db:
         image: postgres:16
-        container_name: postgres_db
+        container_name: ${APP_NAME:-PWD##*/}-postgres-db
         env_file: ../.env
         environment:
             - DB_USER=${POSTGRES_USER}
@@ -34,7 +34,7 @@ services:
             - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
 
         volumes:
-            - postgres_data:/data/postgres
+            - postgres-data:/data/postgres
         healthcheck:
             test:
                 [
@@ -49,5 +49,7 @@ services:
         tty: true
 
 volumes:
-    postgres_data:
     files:
+        name: ${APP_NAME:-PWD##*/}-files
+    postgres-data:
+        name: ${APP_NAME:-PWD##*/}-postgres-data

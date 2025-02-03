@@ -5,16 +5,17 @@ services:
         build:
             context: ..
             dockerfile: docker/Dockerfile.prod
-        container_name: ${APP_NAME:-PWD##*/}
+        container_name: ${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
-            - POSTGRES_HOST=${POSTGRES_HOST:-host.docker.internal}
+            - POSTGRES_HOST=${POSTGRES_HOST:-localhost}
             - POSTGRES_PORT=${POSTGRES_PORT:-5432}
         volumes:
-            - files:/docker
+            - files:/files
 
         restart: unless-stopped
         tty: true
 
 volumes:
     files:
+        name: ${APP_NAME:-PWD##*/}-files

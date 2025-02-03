@@ -5,7 +5,7 @@ from config import APP_NAME
 
 def setup_logging():
     # Make sure the logging directory exists
-    logs_dir = "/docker"
+    logs_dir = "/files"
     os.makedirs(logs_dir, exist_ok=True)
 
     # File for the logs

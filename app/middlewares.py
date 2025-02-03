@@ -1,3 +1,5 @@
+import logging
+
 from aiogram.types import Message
 from typing import Any, Dict, Callable, Awaitable
 from database import PostgresDB
@@ -23,6 +25,7 @@ class UserExistenceCheckMiddleware(DatabaseRelatedMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         if not await self.db.user_exists(event.from_user.id):
+            logging.info(f"New user: {event.from_user.username}")
             await self.db.create_user(
                 event.from_user.id,
                 event.from_user.username,

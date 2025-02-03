@@ -23,7 +23,7 @@ The template supports three deployment modes:
 2. **Local Mode** (`DEPLOY_MODE="local"`)
 
     - Creates a new PostgreSQL container
-    - Perfect for local development and testing
+    - Perfect for fast deploy and testing
     - Includes database persistence
 
 3. **Development Mode** (`DEPLOY_MODE="dev"`)
@@ -38,8 +38,17 @@ The template supports three deployment modes:
 
     - Goto https://github.com/your_username/your_repo/settings/actions/runners/new?arch=x64&os=linux (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
     - Create new local runner on your server
-    - Use screen or other terminal multiplexer to run there `./run.sh`
-    - Download docker and docker compose if they are not installed
+    - Instead of running `./run.sh` file install github runner as service, here is code are:
+        ```bash
+        sudo ./svc.sh install
+        sudo ./svc.sh start
+        ```
+    - Download docker and docker compose if they are not installed,:
+        ```bash
+        sudo curl -fsSL https://get.docker.com | sh
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        ```
 
 3. Create environment for your bot:
 
@@ -55,9 +64,10 @@ The template supports three deployment modes:
         - `DEPLOY_MODE`: `default`, `local` or `dev`
     - All variables are required!
 
-4. Start bot:
+4. Deploy your bot:
+
     - Goto https://github.com/your_username/your_repo/actions/workflows/deploy.yml (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
-    - Press Run workflow and start your bot!
+    - Press Run workflow and start your bot! This workflow will be triggered any time you push any code to `main`.
 
 ## Setting new environment variables
 

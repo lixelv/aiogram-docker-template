@@ -1,11 +1,11 @@
-name: dev_${APP_NAME:-PWD##*/}
+name: dev-${APP_NAME:-PWD##*/}
 
 services:
     app:
         build:
             context: ..
             dockerfile: docker/Dockerfile.dev
-        container_name: dev_${APP_NAME:-PWD##*/}
+        container_name: dev-${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-db}
@@ -14,15 +14,14 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - dev_code:/app
-            - dev_files:/docker
+            - dev-files:/files
 
         restart: unless-stopped
         tty: true
 
     db:
         image: postgres:16
-        container_name: dev_postgres_db
+        container_name: dev-${APP_NAME:-PWD##*/}-postgres-db
         env_file: ../.env
         environment:
             - DB_USER=${POSTGRES_USER}
@@ -35,7 +34,7 @@ services:
             - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
 
         volumes:
-            - dev_postgres_data:/data/postgres
+            - dev-postgres-data:/data/postgres
         healthcheck:
             test:
                 [
@@ -50,6 +49,7 @@ services:
         tty: true
 
 volumes:
-    dev_code:
-    dev_postgres_data:
-    dev_files:
+    dev-files:
+        name: dev-${APP_NAME:-PWD##*/}-files
+    dev-postgres-data:
+        name: dev-${APP_NAME:-PWD##*/}-postgres-data
