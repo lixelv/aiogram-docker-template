@@ -62,5 +62,5 @@ The template supports three deployment modes:
 ## Setting new environment variables
 
 1. Create a new secret in `production` environment, in our case this will be `VARIABLE_NAME`.
-2. Change `deploy.yml` file, add `echo "VARIABLE_NAME=${{ secrets.VARIABLE_NAME }}" >> .env`
-3. After you can get your variable in python using `os.getenv("VARIABLE_NAME")`
+2. Change `deploy.yml` file, add `echo "VARIABLE_NAME=\"${{ secrets.VARIABLE_NAME }}\"" >> .env` line
+3. After you can get your variable value in python using `os.getenv("VARIABLE_NAME")`
