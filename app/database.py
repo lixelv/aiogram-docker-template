@@ -7,21 +7,14 @@ class PostgresDB:
         self.config = config
         self.pool: Optional[asyncpg.Pool] = None
 
-    async def connect(self) -> None:
-        if not self.pool:
-            self.pool = await asyncpg.create_pool(**self.config)
-            await self.create_tables()
-
-    async def close(self) -> None:
-        if self.pool:
-            await self.pool.close()
-
     async def __aenter__(self):
-        await self.connect()
+        self.pool = await asyncpg.create_pool(**self.config)
+        await self.create_tables()
+
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
+        await self.pool.close()
 
     async def create_tables(self) -> None:
         await self.do(
@@ -36,7 +29,6 @@ class PostgresDB:
         )
 
     async def do(self, sql: str, values=None, transaction=False) -> None:
-        await self.connect()
         async with self.pool.acquire() as conn:
             if transaction:
                 async with conn.transaction():
@@ -51,7 +43,6 @@ class PostgresDB:
                     await conn.execute(sql)
 
     async def read(self, sql: str, values=None, one=False):
-        await self.connect()
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(sql, *values) if values else await conn.fetch(sql)
             if one:
