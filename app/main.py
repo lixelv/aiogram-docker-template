@@ -3,13 +3,13 @@ from aiogram import Bot, Dispatcher
 
 from router import router
 from logger import setup_logging
-from config import TELEGRAM_BOT_TOKEN, sql
+from config import config, sql
 from middlewares import UserCheckMiddleware
 
-setup_logging()
+logging = setup_logging()
 
 # Initialize bot and dispatcher
-bot = Bot(token=TELEGRAM_BOT_TOKEN)
+bot = Bot(token=config.TELEGRAM_BOT_TOKEN)
 dp = Dispatcher()
 
 # Setup dp

@@ -40,3 +40,5 @@ def setup_logging():
     # Log Python warnings
     logging.captureWarnings(True)
     logging.info("Logging is complained!")
+
+    return logging
