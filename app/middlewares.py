@@ -15,7 +15,7 @@ class DatabaseRelatedMiddleware(BaseMiddleware):
         pass
 
 
-class UserCheckMiddleware(DatabaseRelatedMiddleware):
+class UserExistenceCheckMiddleware(DatabaseRelatedMiddleware):
     async def __call__(
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
