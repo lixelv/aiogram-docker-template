@@ -1,4 +1,5 @@
 .env
+venv
 ngrok.exe
 test
 test.py
