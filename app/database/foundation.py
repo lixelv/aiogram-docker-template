@@ -1,4 +1,6 @@
 import asyncpg
+import logfire
+
 from typing import Optional
 
 
@@ -22,8 +24,14 @@ class PostgresFoundation:
 
         await self.do(sql, transaction=True)
 
-    async def do(self, sql: str, values=None, transaction=False) -> None:
+    async def do(self, sql: str, values=None, transaction=False, log=True) -> None:
         async with self.pool.acquire() as conn:
+            if log:
+                if values:
+                    logfire.info("Executing:\n" + sql, args=values)
+                else:
+                    logfire.info("Executing:\n" + sql)
+
             if transaction:
                 async with conn.transaction():
                     if values:
@@ -36,9 +44,23 @@ class PostgresFoundation:
                 else:
                     await conn.execute(sql)
 
-    async def read(self, sql: str, values=None, one=False):
+            if log:
+                logfire.info("Executed successfully!")
+
+    async def read(self, sql: str, values=None, one=False, log=True) -> Optional[dict]:
+        if log:
+            if values:
+                logfire.info("Fetching:\n" + sql, args=values)
+            else:
+                logfire.info("Fetching:\n" + sql)
+
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(sql, *values) if values else await conn.fetch(sql)
             if one:
-                return dict(rows[0]) if rows else None
-            return [dict(r) for r in rows]
+                result = dict(rows[0]) if rows else None
+            result = [dict(r) for r in rows]
+
+        if log:
+            logfire.info("Fetched data successfully!", data=result)
+
+        return result
