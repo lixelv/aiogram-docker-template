@@ -1,13 +1,28 @@
 import asyncpg
-import logfire
 
 from typing import Optional
 
 
 class PostgresFoundation:
+    _instance = None
+
+    def __new__(cls, config: dict):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.config = config
+            cls._instance.pool: Optional[asyncpg.Pool] = None
+        return cls._instance
+
     def __init__(self, config: dict):
-        self.config = config
-        self.pool: Optional[asyncpg.Pool] = None
+        # Make sure that the init is only called once by using a flag.
+        # Without this, subsequent calls to __new__ will overwrite the config and pool.
+        if not hasattr(self, "initialized"):
+            self.config = config
+            self.pool: Optional[asyncpg.Pool] = None
+            self.initialized = True
+
+    def __str__(self):
+        return f"PostgreSQL({self.config['database']})"
 
     async def __aenter__(self):
         self.pool = await asyncpg.create_pool(**self.config)
@@ -24,14 +39,8 @@ class PostgresFoundation:
 
         await self.do(sql, transaction=True)
 
-    async def do(self, sql: str, values=None, transaction=False, log=True) -> None:
+    async def do(self, sql: str, values=None, transaction=False) -> None:
         async with self.pool.acquire() as conn:
-            if log:
-                if values:
-                    logfire.info("Executing:\n" + sql, args=values)
-                else:
-                    logfire.info("Executing:\n" + sql)
-
             if transaction:
                 async with conn.transaction():
                     if values:
@@ -44,23 +53,12 @@ class PostgresFoundation:
                 else:
                     await conn.execute(sql)
 
-            if log:
-                logfire.info("Executed successfully!")
-
-    async def read(self, sql: str, values=None, one=False, log=True) -> Optional[dict]:
-        if log:
-            if values:
-                logfire.info("Fetching:\n" + sql, args=values)
-            else:
-                logfire.info("Fetching:\n" + sql)
-
+    async def read(self, sql: str, values=None, one=False) -> Optional[dict]:
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(sql, *values) if values else await conn.fetch(sql)
             if one:
                 result = dict(rows[0]) if rows else None
-            result = [dict(r) for r in rows]
-
-        if log:
-            logfire.info("Fetched data successfully!", data=result)
+            else:
+                result = [dict(r) for r in rows]
 
         return result

@@ -14,4 +14,4 @@ async def start(message: Message):
 
 @router.message(Command("help"))
 async def help(message: Message, db: PostgresDB):
-    return await message.reply(str(await db.get_user(message.from_user.id)))
+    return await message.reply(str(await db.get_user()))
