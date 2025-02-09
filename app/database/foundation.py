@@ -1,6 +1,6 @@
 import asyncpg
 
-from typing import Optional
+from typing import Optional, List
 
 
 class PostgresPool:
@@ -25,9 +25,11 @@ class PostgresPool:
             query = f.read()
 
         async with self.pool.acquire() as connection:
-            await self.do(connection, query, transaction=True)
+            await self.execute(connection, query, transaction=True)
 
-    async def do(self, connection, query: str, values=None, transaction=False) -> None:
+    async def execute(
+        self, connection, query: str, values=None, transaction=False
+    ) -> None:
         if transaction:
             async with connection.transaction():
                 if values:
@@ -40,9 +42,23 @@ class PostgresPool:
             else:
                 await connection.execute(query)
 
-    async def read(
-        self, connection, query: str, values=None, one=False
+    async def fetch_one(
+        self, connection, query: str, values=None, pydantic_model=None
     ) -> Optional[dict]:
+        return await self._fetch(
+            connection, query, values, one=True, pydantic_model=pydantic_model
+        )
+
+    async def fetch_all(
+        self, connection, query: str, values=None, pydantic_model=None
+    ) -> Optional[List[dict]]:
+        return await self._fetch(
+            connection, query, values, one=False, pydantic_model=pydantic_model
+        )
+
+    async def _fetch(
+        self, connection, query: str, values=None, one=False, pydantic_model=None
+    ) -> Optional[dict] | Optional[List[dict]]:
         rows = (
             await connection.fetch(query, *values)
             if values
@@ -50,7 +66,16 @@ class PostgresPool:
         )
         if one:
             result = dict(rows[0]) if rows else None
+
+            if pydantic_model is not None and result is not None:
+                result = pydantic_model(**result)
         else:
             result = [dict(r) for r in rows]
+
+            if pydantic_model is not None:
+                result = [pydantic_model(**r) for r in result]
+
+            if not result:
+                result = None
 
         return result

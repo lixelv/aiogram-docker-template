@@ -1,13 +1,23 @@
 from .context import PostgresConnectionWithContext
 from typing import Optional
+from datetime import datetime
+
+from pydantic import BaseModel
 from core.decorators import async_logfire_class_decorator
+
+
+class User(BaseModel):
+    id: int
+    username: str
+    full_name: str
+    timestamp: datetime
 
 
 @async_logfire_class_decorator
 class PostgresDB(PostgresConnectionWithContext):
     async def create_user(self) -> None:
         query = "INSERT INTO users (id, username, full_name) VALUES ($1, $2, $3)"
-        await self.do(
+        await self.execute(
             query,
             (
                 self.context.user.id,
@@ -16,9 +26,8 @@ class PostgresDB(PostgresConnectionWithContext):
             ),
         )
 
-    async def get_user(self) -> Optional[dict]:
+    async def get_user(self) -> Optional[User]:
         query = "SELECT * FROM users WHERE id=$1"
-        return await self.read(query, (self.context.user.id,), one=True)
+        result = await self.fetch_one(query, (self.context.user.id,), User)
 
-    async def user_exists(self) -> bool:
-        return bool(await self.get_user())
+        return result

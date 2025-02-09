@@ -29,8 +29,17 @@ class PostgresConnectionWithContext:
     async def __aexit__(self, *exc):
         await self.foundation.pool.release(self.connection)
 
-    async def do(self, query: str, values=None, transaction=False):
-        return await self.foundation.do(self.connection, query, values, transaction)
+    async def execute(self, query: str, values=None, transaction=False):
+        return await self.foundation.execute(
+            self.connection, query, values, transaction
+        )
 
-    async def read(self, query: str, values=None, one=False):
-        return await self.foundation.read(self.connection, query, values, one)
+    async def fetch_one(self, query: str, values=None, pydantic_model=None):
+        return await self.foundation.fetch_one(
+            self.connection, query, values, pydantic_model
+        )
+
+    async def fetch_all(self, query: str, values=None, pydantic_model=None):
+        return await self.foundation.fetch_all(
+            self.connection, query, values, pydantic_model
+        )

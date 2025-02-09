@@ -21,7 +21,7 @@ class DatabaseMiddleware(BaseMiddleware):
             with logfire.span("Checking if user exists..."):
                 data["db"] = db
 
-                if not await db.user_exists():
+                if await db.get_user() is None:
                     await db.create_user()
                     logfire.info("User created!")
                 else:

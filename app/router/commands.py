@@ -15,7 +15,7 @@ async def start(message: Message):
 
 @router.message(Command("help"))
 async def help(message: Message, db: PostgresDB):
-    return await message.reply(str(await db.get_user()))
+    return await message.reply(repr(await db.get_user()))
 
 
 @router.message(Command("admin"), IsAdmin())
