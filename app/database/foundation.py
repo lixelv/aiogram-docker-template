@@ -3,26 +3,13 @@ import asyncpg
 from typing import Optional
 
 
-class PostgresFoundation:
-    _instance = None
-
-    def __new__(cls, config: dict):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance.config = config
-            cls._instance.pool: Optional[asyncpg.Pool] = None
-        return cls._instance
-
+class PostgresPool:
     def __init__(self, config: dict):
-        # Make sure that the init is only called once by using a flag.
-        # Without this, subsequent calls to __new__ will overwrite the config and pool.
-        if not hasattr(self, "initialized"):
-            self.config = config
-            self.pool: Optional[asyncpg.Pool] = None
-            self.initialized = True
+        self.config = config
+        self.pool: Optional[asyncpg.Pool] = None
 
     def __str__(self):
-        return f"PostgreSQL({self.config['database']})"
+        return f"PostgresPool({self.config['database']})"
 
     async def __aenter__(self):
         self.pool = await asyncpg.create_pool(**self.config)
@@ -30,35 +17,40 @@ class PostgresFoundation:
 
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, *exc):
         await self.pool.close()
 
     async def create_tables(self) -> None:
         with open("app/database/schema.sql", "r") as f:
-            sql = f.read()
+            query = f.read()
 
-        await self.do(sql, transaction=True)
+        async with self.pool.acquire() as connection:
+            await self.do(connection, query, transaction=True)
 
-    async def do(self, sql: str, values=None, transaction=False) -> None:
-        async with self.pool.acquire() as conn:
-            if transaction:
-                async with conn.transaction():
-                    if values:
-                        await conn.execute(sql, *values)
-                    else:
-                        await conn.execute(sql)
-            else:
+    async def do(self, connection, query: str, values=None, transaction=False) -> None:
+        if transaction:
+            async with connection.transaction():
                 if values:
-                    await conn.execute(sql, *values)
+                    await connection.execute(query, *values)
                 else:
-                    await conn.execute(sql)
-
-    async def read(self, sql: str, values=None, one=False) -> Optional[dict]:
-        async with self.pool.acquire() as conn:
-            rows = await conn.fetch(sql, *values) if values else await conn.fetch(sql)
-            if one:
-                result = dict(rows[0]) if rows else None
+                    await connection.execute(query)
+        else:
+            if values:
+                await connection.execute(query, *values)
             else:
-                result = [dict(r) for r in rows]
+                await connection.execute(query)
+
+    async def read(
+        self, connection, query: str, values=None, one=False
+    ) -> Optional[dict]:
+        rows = (
+            await connection.fetch(query, *values)
+            if values
+            else await connection.fetch(query)
+        )
+        if one:
+            result = dict(rows[0]) if rows else None
+        else:
+            result = [dict(r) for r in rows]
 
         return result

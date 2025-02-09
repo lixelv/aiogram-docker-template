@@ -1,28 +1,38 @@
 import logfire
-import time
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import TelegramObject, Message, CallbackQuery
 from typing import Any, Dict, Callable, Awaitable
+
+from database import Context
 
 
 class LoggingMiddleware(BaseMiddleware):
     async def __call__(
         self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
         data: Dict[str, Any],
     ) -> Any:
-        if isinstance(event, Message) and event.text:
-            start = time.time()
-            result = await handler(event, data)
-            logfire.info(
-                "Handled message in {time:.2f} ms",
-                time=(time.time() - start) * 1000,
-                input_text=event.text,
-                output_text=result.text,
-                user_id=event.from_user.id,
-            )
-            return result
+        context: Context = data["context"]
+        input_text: str = None
 
-        return await handler(event, data)
+        if isinstance(event, Message):
+            input_text = event.text
+        elif isinstance(event, CallbackQuery):
+            input_text = event.data
+
+        with logfire.span(
+            "Handling {context.event_type} from {context.user.username}",
+            context=context,
+        ):
+            if input_text is not None:
+                logfire.info("Input: {input_text}", input_text=input_text)
+
+            with logfire.span("Handling request..."):
+                result = await handler(event, data)
+
+            if result is not None and isinstance(result, Message):
+                logfire.info("Output: {output_text}", output_text=result.text)
+
+        return result
