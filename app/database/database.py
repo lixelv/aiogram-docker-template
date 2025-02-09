@@ -1,5 +1,5 @@
 from .context import PostgresConnectionWithContext
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -29,5 +29,11 @@ class PostgresDB(PostgresConnectionWithContext):
     async def get_user(self) -> Optional[User]:
         query = "SELECT * FROM users WHERE id=$1"
         result = await self.fetch_one(query, (self.context.user.id,), User)
+
+        return result
+
+    async def get_all_users(self) -> Optional[List[User]]:
+        query = "SELECT * FROM users"
+        result = await self.fetch_all(query, (), User)
 
         return result

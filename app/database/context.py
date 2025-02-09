@@ -1,10 +1,10 @@
 import asyncpg
-
-from typing import Optional
+from typing import Optional, List, TypeVar, Type
 from pydantic import BaseModel
+from aiogram.types import User
 from .foundation import PostgresPool
 
-from aiogram.types import User
+T = TypeVar("T", bound=BaseModel)
 
 
 class Context(BaseModel):
@@ -34,12 +34,22 @@ class PostgresConnectionWithContext:
             self.connection, query, values, transaction
         )
 
-    async def fetch_one(self, query: str, values=None, pydantic_model=None):
+    async def fetch_one(
+        self,
+        query: str,
+        values=None,
+        pydantic_model: Optional[Type[T]] = None,
+    ) -> Optional[T]:
         return await self.foundation.fetch_one(
             self.connection, query, values, pydantic_model
         )
 
-    async def fetch_all(self, query: str, values=None, pydantic_model=None):
+    async def fetch_all(
+        self,
+        query: str,
+        values=None,
+        pydantic_model: Optional[Type[T]] = None,
+    ) -> Optional[List[T]]:
         return await self.foundation.fetch_all(
             self.connection, query, values, pydantic_model
         )

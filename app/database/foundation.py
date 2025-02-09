@@ -1,6 +1,9 @@
 import asyncpg
 
-from typing import Optional, List
+from pydantic import BaseModel
+from typing import Optional, List, TypeVar, Type
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class PostgresPool:
@@ -28,54 +31,32 @@ class PostgresPool:
             await self.execute(connection, query, transaction=True)
 
     async def execute(
-        self, connection, query: str, values=None, transaction=False
+        self, connection, query: str, values=(), transaction=False
     ) -> None:
         if transaction:
             async with connection.transaction():
-                if values:
-                    await connection.execute(query, *values)
-                else:
-                    await connection.execute(query)
-        else:
-            if values:
                 await connection.execute(query, *values)
-            else:
-                await connection.execute(query)
+        else:
+            await connection.execute(query, *values)
 
     async def fetch_one(
-        self, connection, query: str, values=None, pydantic_model=None
-    ) -> Optional[dict]:
-        return await self._fetch(
-            connection, query, values, one=True, pydantic_model=pydantic_model
-        )
+        self,
+        connection,
+        query: str,
+        values=(),
+        pydantic_model: Optional[Type[T]] = None,
+    ) -> Optional[T]:
+        result = await self.fetch_all(connection, query, values, pydantic_model)
+        return result[0] if result else None
 
     async def fetch_all(
-        self, connection, query: str, values=None, pydantic_model=None
-    ) -> Optional[List[dict]]:
-        return await self._fetch(
-            connection, query, values, one=False, pydantic_model=pydantic_model
-        )
+        self,
+        connection,
+        query: str,
+        values=(),
+        pydantic_model: Optional[Type[T]] = None,
+    ) -> Optional[List[T]]:
+        rows = await connection.fetch(query, *values)
 
-    async def _fetch(
-        self, connection, query: str, values=None, one=False, pydantic_model=None
-    ) -> Optional[dict] | Optional[List[dict]]:
-        rows = (
-            await connection.fetch(query, *values)
-            if values
-            else await connection.fetch(query)
-        )
-        if one:
-            result = dict(rows[0]) if rows else None
-
-            if pydantic_model is not None and result is not None:
-                result = pydantic_model(**result)
-        else:
-            result = [dict(r) for r in rows]
-
-            if pydantic_model is not None:
-                result = [pydantic_model(**r) for r in result]
-
-            if not result:
-                result = None
-
-        return result
+        using_model = pydantic_model or dict
+        return [using_model(**r) for r in rows] if rows else None
