@@ -4,7 +4,7 @@ services:
     app:
         build:
             context: ..
-            dockerfile: docker/Dockerfile.dev
+            dockerfile: docker/Dockerfile.prod
         container_name: dev-${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
@@ -14,7 +14,7 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - dev-files:/files
+            - dev-files:/app
 
         restart: unless-stopped
         tty: true
@@ -47,6 +47,16 @@ services:
 
         restart: unless-stopped
         tty: true
+
+    dev:
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile.dev
+        container_name: dev-${APP_NAME:-PWD##*/}-dev
+        volumes:
+            - dev-files:/app # Монтируем тот же том, куда и app
+        tty: true
+        stdin_open: true # Для интерактивного режима
 
 volumes:
     dev-files:
