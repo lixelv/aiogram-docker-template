@@ -6,9 +6,10 @@ from .logging import LoggingMiddleware
 
 
 def setup_middleware(dp: Dispatcher) -> None:
-    dp.message.outer_middleware(ContextMiddleware())
-    dp.message.outer_middleware(LoggingMiddleware())
-    dp.message.outer_middleware(DatabaseMiddleware())
+    for middleware in (dp.message, dp.callback_query):
+        middleware.outer_middleware(ContextMiddleware())
+        middleware.outer_middleware(LoggingMiddleware())
+        middleware.outer_middleware(DatabaseMiddleware())
 
 
 __all__ = [
