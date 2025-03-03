@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 
 from .context import ContextMiddleware
-from .database import DatabaseMiddleware
+from .postgres import DatabaseMiddleware
 from .logging import LoggingMiddleware
 
 

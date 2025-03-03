@@ -41,17 +41,19 @@ class PostgresPool:
 
     async def fetch_one(
         self,
-        connection,
+        connection: asyncpg.Connection,
         query: str,
         values=(),
         pydantic_model: Optional[Type[T]] = None,
     ) -> Optional[T]:
-        result = await self.fetch_all(connection, query, values, pydantic_model)
-        return result[0] if result else None
+        row = await connection.fetchrow(query, *values)
+
+        using_model = pydantic_model or dict
+        return using_model(**row) if row else None
 
     async def fetch_all(
         self,
-        connection,
+        connection: asyncpg.Connection,
         query: str,
         values=(),
         pydantic_model: Optional[Type[T]] = None,

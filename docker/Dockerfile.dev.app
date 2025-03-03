@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install watcheagle
+RUN pip install watchdog[watchmedo]
+
+# Copy requirements first to leverage Docker cache
+COPY app/requirements.txt requirements.txt
+
+# Install dependencies with caching
+RUN pip install -r requirements.txt
+
+# Copy the rest of the application
+COPY . /app
+
+# Run the bot when the container launches
+ENTRYPOINT watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM python app/main.py

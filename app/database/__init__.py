@@ -1,4 +1,4 @@
-from .database import PostgresDB
+from .postgres import PostgresDB
 from .foundation import PostgresPool
 from .context import PostgresConnectionWithContext, Context
 

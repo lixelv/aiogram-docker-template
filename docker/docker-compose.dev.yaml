@@ -4,7 +4,7 @@ services:
     app:
         build:
             context: ..
-            dockerfile: docker/Dockerfile.prod
+            dockerfile: docker/Dockerfile.dev.app
         container_name: dev-${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
