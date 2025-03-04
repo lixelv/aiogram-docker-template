@@ -1,10 +1,6 @@
-import random
-
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-
-import logfire
 
 from keyboard_ import create_variant_keyboard
 from database import PostgresDB
@@ -25,12 +21,16 @@ async def help(message: Message, db: PostgresDB):
 
 
 @router.message(Command("ask"))
-async def users(message: Message, db: PostgresDB):
-    string, variants = generate_question()    
+async def users(message: Message):
+    string, variants = generate_question()
     return await message.reply(string, reply_markup=create_variant_keyboard(variants))
-    
-    
+
 
 @router.message(Command("admin"), IsAdmin())
 async def admin(message: Message):
     return await message.reply("You are admin!")
+
+
+@router.message(Command("users"), IsAdmin())
+async def users(message: Message, db: PostgresDB):
+    return await message.reply("\n".join((repr(i) for i in db.get_all_users())))
