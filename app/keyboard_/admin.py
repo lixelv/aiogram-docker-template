@@ -1,21 +1,72 @@
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from typing import Dict
+
+from .pagination import with_pagination
+from database import PostgresDB, User
+from core import USERS_PER_PAGE
 
 
-class SelectVariantCallback(CallbackData, prefix="SelectVariantCallback"):
+class SelectUserCallback(CallbackData, prefix="SelectUserCallback"):
     page: int
     value: int
-    right: int
 
 
-def create_variant_keyboard(variants: Dict[int, bool], page: int = 0):
+class SelectUserPaginationCallback(CallbackData, prefix="SelectUserPaginationCallback"):
+    page: int
+
+
+@with_pagination("users", USERS_PER_PAGE, SelectUserPaginationCallback)
+async def create_users_keyboard(db: PostgresDB, page: int = 0):
+    builder = InlineKeyboardBuilder()
+    users = await db.get_all_users(USERS_PER_PAGE, page)
+
+    for user in users:
+        builder.button(
+            text=user.username or str(user.id),
+            callback_data=SelectUserCallback(page=page, value=user.id).pack(),
+        )
+
+    builder.adjust(2)  # Set width to 2 buttons per row
+    return builder
+
+
+class BanUserCallback(CallbackData, prefix="BanUserCallback"):
+    user_id: int
+
+
+class UnbanUserCallback(CallbackData, prefix="UnbanUserCallback"):
+    user_id: int
+
+
+class DeleteAdminCallback(CallbackData, prefix="DeleteAdminCallback"):
+    user_id: int
+
+
+class AddAdminCallback(CallbackData, prefix="AddAdminCallback"):
+    user_id: int
+
+
+def create_user_keyboard(user: User, is_owner: bool):
     builder = InlineKeyboardBuilder()
 
-    for number, value in variants.items():
+    if is_owner:
+        if user.is_admin:
+            builder.button(
+                text="Delete admin",
+                callback_data=DeleteAdminCallback(user_id=user.id).pack(),
+            )
+        else:
+            builder.button(
+                text="Set admin", callback_data=AddAdminCallback(user_id=user.id).pack()
+            )
+
+    if user.is_banned:
         builder.button(
-            text=str(number),
-            callback_data=SelectVariantCallback(value=number, right=value).pack(),
+            text="Unban user", callback_data=UnbanUserCallback(user_id=user.id).pack()
+        )
+    else:
+        builder.button(
+            text="Ban user", callback_data=BanUserCallback(user_id=user.id).pack()
         )
 
     builder.adjust(2)  # Set width to 2 buttons per row
