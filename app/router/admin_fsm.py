@@ -17,8 +17,8 @@ async def get_user_by_id_or_username(db: PostgresDB, user_id_or_username: str):
         return await db.get_user_by_username(user_id_or_username)
 
 
-@router.message(F.text, OwnerStates.set_admin, IsOwner())
-async def set_admin_2(message: Message, db: PostgresDB, state: FSMContext):
+@router.message(F.text, OwnerStates.add_admin, IsOwner())
+async def add_admin_2(message: Message, db: PostgresDB, state: FSMContext):
     user = await get_user_by_id_or_username(db, message.text)
 
     if user is None:

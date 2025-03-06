@@ -2,7 +2,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class OwnerStates(StatesGroup):
-    set_admin = State()
+    add_admin = State()
     delete_admin = State()
 
 

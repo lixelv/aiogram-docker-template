@@ -11,9 +11,9 @@ from keyboard_ import create_users_keyboard
 router = Router()
 
 
-@router.message(Command("set_admin"), IsOwner())
-async def set_admin(message: Message, state: FSMContext):
-    await state.set_state(OwnerStates.set_admin)
+@router.message(Command("add_admin"), IsOwner())
+async def add_admin(message: Message, state: FSMContext):
+    await state.set_state(OwnerStates.add_admin)
     return await message.reply("Enter username or id:")
 
 
