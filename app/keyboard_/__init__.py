@@ -5,7 +5,7 @@ from .admin import (
     create_users_keyboard,
     BanUserCallback,
     UnbanUserCallback,
-    DeleteAdminCallback,
+    RemoveAdminCallback,
     AddAdminCallback,
     create_user_keyboard,
 )
@@ -18,7 +18,7 @@ __all__ = [
     "SelectUserCallback",
     "BanUserCallback",
     "UnbanUserCallback",
-    "DeleteAdminCallback",
+    "RemoveAdminCallback",
     "AddAdminCallback",
     "create_user_keyboard",
 ]

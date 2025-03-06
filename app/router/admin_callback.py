@@ -9,7 +9,7 @@ from keyboard_ import (
     create_user_keyboard,
     BanUserCallback,
     UnbanUserCallback,
-    DeleteAdminCallback,
+    RemoveAdminCallback,
     AddAdminCallback,
 )
 from filter import IsAdmin, IsOwner
@@ -103,10 +103,10 @@ async def add_admin(callback: CallbackQuery, db: PostgresDB):
     return await callback.message.edit_reply_markup(reply_markup=keyboard)
 
 
-@router.callback_query(DeleteAdminCallback.filter(), IsOwner())
-async def delete_admin(callback: CallbackQuery, db: PostgresDB):
+@router.callback_query(RemoveAdminCallback.filter(), IsOwner())
+async def remove_admin(callback: CallbackQuery, db: PostgresDB):
     data = callback.data
-    data = DeleteAdminCallback.unpack(data)
+    data = RemoveAdminCallback.unpack(data)
 
     user_id = data.user_id
     page = data.page
@@ -116,5 +116,5 @@ async def delete_admin(callback: CallbackQuery, db: PostgresDB):
     user = await db.get_user_by_id(user_id)
     keyboard = create_user_keyboard(user, True, page)
 
-    await callback.answer("Admin deleted!")
+    await callback.answer("Admin removed!")
     return await callback.message.edit_reply_markup(reply_markup=keyboard)

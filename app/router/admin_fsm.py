@@ -18,7 +18,7 @@ async def get_user_by_id_or_username(db: PostgresDB, user_id_or_username: str):
 
 
 @router.message(F.text, OwnerStates.add_admin, IsOwner())
-async def add_admin_2(message: Message, db: PostgresDB, state: FSMContext):
+async def add_admin(message: Message, db: PostgresDB, state: FSMContext):
     user = await get_user_by_id_or_username(db, message.text)
 
     if user is None:
@@ -31,8 +31,8 @@ async def add_admin_2(message: Message, db: PostgresDB, state: FSMContext):
     return await message.reply("Admin added!")
 
 
-@router.message(F.text, OwnerStates.delete_admin, IsOwner())
-async def delete_admin_2(message: Message, db: PostgresDB, state: FSMContext):
+@router.message(F.text, OwnerStates.remove_admin, IsOwner())
+async def remove_admin(message: Message, db: PostgresDB, state: FSMContext):
     user = await get_user_by_id_or_username(db, message.text)
 
     if user is None:
@@ -42,11 +42,11 @@ async def delete_admin_2(message: Message, db: PostgresDB, state: FSMContext):
 
     await db.update_user_is_admin(user.id, False)
     await state.clear()
-    return await message.reply("Admin deleted!")
+    return await message.reply("Admin removed!")
 
 
 @router.message(F.text, AdminStates.ban_user, IsAdmin())
-async def ban_2(message: Message, db: PostgresDB, state: FSMContext):
+async def ban(message: Message, db: PostgresDB, state: FSMContext):
     user = await get_user_by_id_or_username(db, message.text)
 
     if user is None:
@@ -62,7 +62,7 @@ async def ban_2(message: Message, db: PostgresDB, state: FSMContext):
 
 
 @router.message(F.text, AdminStates.unban_user, IsAdmin())
-async def unban_2(message: Message, db: PostgresDB, state: FSMContext):
+async def unban(message: Message, db: PostgresDB, state: FSMContext):
     user = await get_user_by_id_or_username(db, message.text)
 
     if user is None:

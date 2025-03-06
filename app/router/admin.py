@@ -17,9 +17,9 @@ async def add_admin(message: Message, state: FSMContext):
     return await message.reply("Enter username or id:")
 
 
-@router.message(Command("delete_admin"), IsOwner())
-async def delete_admin(message: Message, state: FSMContext):
-    await state.set_state(OwnerStates.delete_admin)
+@router.message(Command("remove_admin"), IsOwner())
+async def remove_admin(message: Message, state: FSMContext):
+    await state.set_state(OwnerStates.remove_admin)
     return await message.reply("Enter username or id:")
 
 
