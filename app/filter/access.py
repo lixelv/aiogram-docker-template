@@ -7,7 +7,7 @@ from database import PostgresDB
 
 
 class IsOwner(BaseFilter):
-    async def __call__(self, db: PostgresDB) -> bool:
+    async def __call__(self, event, db: PostgresDB) -> bool:
         user = await db.get_user()
 
         if user.id == OWNER_ID:
@@ -19,7 +19,7 @@ class IsOwner(BaseFilter):
 
 
 class IsAdmin(BaseFilter):
-    async def __call__(self, db: PostgresDB) -> bool:
+    async def __call__(self, event, db: PostgresDB) -> bool:
         user = await db.get_user()
 
         if user.is_admin:
