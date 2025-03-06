@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
+from core import OWNER_ID
 from fsm import AdminStates, OwnerStates
 from database import PostgresDB
 from filter import IsAdmin, IsOwner
@@ -51,3 +52,41 @@ async def delete_admin_2(message: Message, db: PostgresDB, state: FSMContext):
     await db.update_user_is_admin(user.id, False)
     await state.clear()
     return await message.reply("Admin deleted!")
+
+
+@router.message(Command("ban"), IsAdmin())
+async def ban_1(message: Message, state: FSMContext):
+    await state.set_state(AdminStates.ban_user)
+    return await message.reply("Enter username or id:")
+
+
+@router.message(F.text, AdminStates.ban_user, IsAdmin())
+async def ban_2(message: Message, db: PostgresDB, state: FSMContext):
+    user = await get_user_by_id_or_username(db, message.text)
+
+    if user is None:
+        return await message.reply("User not found!")
+    elif user.is_admin or user.id == OWNER_ID:
+        return await message.reply("You can't ban this user!")
+
+    await db.update_user_is_banned(user.id, True)
+    await state.clear()
+    return await message.reply("User banned!")
+
+
+@router.message(Command("unban"), IsAdmin())
+async def unban_1(message: Message, state: FSMContext):
+    await state.set_state(AdminStates.unban_user)
+    return await message.reply("Enter username or id:")
+
+
+@router.message(F.text, AdminStates.unban_user, IsAdmin())
+async def unban_2(message: Message, db: PostgresDB, state: FSMContext):
+    user = await get_user_by_id_or_username(db, message.text)
+
+    if user is None:
+        return await message.reply("User not found!")
+
+    await db.update_user_is_banned(user.id, False)
+    await state.clear()
+    return await message.reply("User unbanned!")

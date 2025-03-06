@@ -40,6 +40,10 @@ class UserMethods(PostgresConnectionWithContext):
         query = "UPDATE users SET is_admin=$1 WHERE id=$2"
         await self.execute(query, (is_admin, user_id))
 
+    async def update_user_is_banned(self, user_id, is_banned: bool) -> None:
+        query = "UPDATE users SET is_banned=$1 WHERE id=$2"
+        await self.execute(query, (is_banned, user_id))
+
 
 class PostgresDB(UserMethods):
     pass

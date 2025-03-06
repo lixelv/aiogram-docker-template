@@ -1,10 +1,12 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 
 class User(BaseModel):
     id: int
     is_admin: bool
-    username: str
-    full_name: str
+    is_banned: bool
+    username: Optional[str]
+    full_name: Optional[str]
     timestamp: datetime
