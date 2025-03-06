@@ -1,3 +1,3 @@
-from .postgres import IsAdmin
+from .access import IsAdmin, IsOwner
 
-__all__ = ["IsAdmin"]
+__all__ = ["IsAdmin", "IsOwner"]

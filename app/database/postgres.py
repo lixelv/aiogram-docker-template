@@ -22,6 +22,8 @@ class PostgresDB(PostgresConnectionWithContext):
         query = "SELECT * FROM users WHERE id=$1"
         return await self.fetch_one(query, (self.context.user.id,), User)
 
-    async def get_all_users(self) -> Optional[List[User]]:
-        query = "SELECT * FROM users"
-        return await self.fetch_all(query, (), User)
+    # Using index system (0 is the first element)
+    async def get_all_users(self, limit, offset) -> Optional[List[User]]:
+        offset = offset * limit
+        query = "SELECT * FROM users LIMIT $1 OFFSET $2"
+        return await self.fetch_all(query, (limit, offset), User)

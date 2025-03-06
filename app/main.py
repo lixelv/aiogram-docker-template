@@ -5,12 +5,13 @@ from core import setup_logging, TELEGRAM_BOT_TOKEN, DATABASE_CONFIG
 from middleware import setup_middleware
 from router import setup_router
 from database import PostgresPool
+from fsm import storage
 
 setup_logging()
 
 # Initialize bot and dispatcher
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
 # Setup dp
 setup_middleware(dp)

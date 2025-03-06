@@ -62,6 +62,7 @@ The template supports three deployment modes:
         - `POSTGRES_PASSWORD`: Password for postgres database
         - `POSTGRES_DB`: Database name
         - `DEPLOY_MODE`: `default`, `local` or `dev`
+        - `OWNER_ID`: Your telegram account id, get it from [@userinfobot](https://t.me/userinfobot)
     - All variables are required!
 
 4. Deploy your bot:
