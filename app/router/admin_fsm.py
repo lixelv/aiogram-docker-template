@@ -28,7 +28,7 @@ async def add_admin_2(message: Message, db: PostgresDB, state: FSMContext):
 
     await db.update_user_is_admin(user.id, True)
     await state.clear()
-    return await message.reply("Admin set!")
+    return await message.reply("Admin added!")
 
 
 @router.message(F.text, OwnerStates.delete_admin, IsOwner())
