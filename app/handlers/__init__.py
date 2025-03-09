@@ -1,17 +1,9 @@
 from aiogram import Dispatcher
 
-from .admin import router as admin_router
-from .admin_fsm import router as admin_fsm_router
-from .admin_callback import router as admin_callback_router
-from .callback import router as callback_router
 from .commands import router as commands_router
 from .echo import router as echo_router
 
 
 def setup_handlers(dp: Dispatcher):
     dp.include_router(commands_router)
-    dp.include_router(callback_router)
-    dp.include_router(admin_router)
-    dp.include_router(admin_fsm_router)
-    dp.include_router(admin_callback_router)
     dp.include_router(echo_router)

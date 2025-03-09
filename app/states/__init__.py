@@ -1,4 +1,4 @@
-from .redis import RedisStorage, storage
-from .admin_states import AdminStates, OwnerStates
+from aiogram.fsm.storage.memory import MemoryStorage
 
-__all__ = ["RedisStorage", "storage", "AdminStates", "OwnerStates"]
+storage = MemoryStorage()
+__all__ = ["storage"]
