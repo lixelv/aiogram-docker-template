@@ -3,7 +3,6 @@ from aiogram import Dispatcher
 from .context import ContextMiddleware
 from .postgres import DatabaseMiddleware
 from .logging import LoggingMiddleware
-from .banned import IsBannedMiddleware
 
 
 def setup_middlewares(dp: Dispatcher) -> None:
@@ -11,7 +10,6 @@ def setup_middlewares(dp: Dispatcher) -> None:
         middleware.outer_middleware(ContextMiddleware())
         middleware.outer_middleware(LoggingMiddleware())
         middleware.outer_middleware(DatabaseMiddleware())
-        middleware.outer_middleware(IsBannedMiddleware())
 
 
 __all__ = [
