@@ -17,7 +17,7 @@ class SelectUserPaginationCallback(CallbackData, prefix="SelectUserPaginationCal
     page: int
 
 
-@with_pagination("users", USERS_PER_PAGE, SelectUserPaginationCallback)
+@with_pagination(PostgresDB.users_offset, USERS_PER_PAGE, SelectUserPaginationCallback)
 async def create_users_keyboard(db: PostgresDB, page: int = 0):
     builder = InlineKeyboardBuilder()
     users = await db.get_all_users(USERS_PER_PAGE, page)

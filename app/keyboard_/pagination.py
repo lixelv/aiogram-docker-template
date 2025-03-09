@@ -6,7 +6,7 @@ from database import PostgresDB
 
 
 def with_pagination(
-    table_name: str,
+    offset_method: Callable,
     items_per_page: int,
     pagination_callback_class: Any,
 ):
@@ -28,8 +28,7 @@ def with_pagination(
                     )
                 )
 
-            query = f"SELECT EXISTS(SELECT 1 FROM {table_name} LIMIT 1 OFFSET {(page + 1) * items_per_page})"
-            result = await db.fetch_one(query, ())
+            result = await offset_method(db, (page + 1) * items_per_page)
             has_next_page = result["exists"]
 
             if has_next_page:

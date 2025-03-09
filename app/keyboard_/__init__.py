@@ -1,4 +1,3 @@
-from .variant import create_variant_keyboard, SelectVariantCallback
 from .admin import (
     SelectUserPaginationCallback,
     SelectUserCallback,
@@ -11,9 +10,7 @@ from .admin import (
 )
 
 __all__ = [
-    "create_variant_keyboard",
     "create_users_keyboard",
-    "SelectVariantCallback",
     "SelectUserPaginationCallback",
     "SelectUserCallback",
     "BanUserCallback",

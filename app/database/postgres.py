@@ -41,6 +41,10 @@ class UserMethods(PostgresConnectionWithContext):
         else:
             return await self.get_user_by_username(user_id_or_username)
 
+    async def users_offset(self, offset: int) -> int:
+        query = "SELECT EXISTS(SELECT 1 FROM users LIMIT 1 OFFSET $1)"
+        return await self.fetch_one(query, (offset,))
+
     # Using index system (0 is the first element)
     async def get_all_users(self, limit, offset) -> Optional[List[User]]:
         offset = offset * limit
