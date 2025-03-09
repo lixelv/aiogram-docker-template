@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 
 from core import OWNER_ID
-from keyboard_ import (
+from keyboards import (
     create_users_keyboard,
     SelectUserPaginationCallback,
     SelectUserCallback,
@@ -12,7 +12,7 @@ from keyboard_ import (
     RemoveAdminCallback,
     AddAdminCallback,
 )
-from filter import IsAdmin, IsOwner
+from filters import IsAdmin, IsOwner
 from database import PostgresDB
 
 router = Router()

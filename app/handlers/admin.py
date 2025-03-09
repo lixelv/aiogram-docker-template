@@ -3,10 +3,10 @@ from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from fsm import AdminStates, OwnerStates
+from states import AdminStates, OwnerStates
 from database import PostgresDB
-from filter import IsAdmin, IsOwner
-from keyboard_ import create_users_keyboard
+from filters import IsAdmin, IsOwner
+from keyboards import create_users_keyboard
 
 router = Router()
 

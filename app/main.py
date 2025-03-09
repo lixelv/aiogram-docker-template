@@ -2,10 +2,10 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from core import setup_logging, TELEGRAM_BOT_TOKEN, DATABASE_CONFIG
-from middleware import setup_middleware
-from router import setup_router
+from middlewares import setup_middlewares
+from handlers import setup_handlers
 from database import PostgresPool
-from fsm import storage
+from states import storage
 
 setup_logging()
 
@@ -14,8 +14,8 @@ bot = Bot(token=TELEGRAM_BOT_TOKEN)
 dp = Dispatcher(storage=storage)
 
 # Setup dp
-setup_middleware(dp)
-setup_router(dp)
+setup_middlewares(dp)
+setup_handlers(dp)
 
 
 async def main():

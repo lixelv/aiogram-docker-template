@@ -6,7 +6,7 @@ from .logging import LoggingMiddleware
 from .banned import IsBannedMiddleware
 
 
-def setup_middleware(dp: Dispatcher) -> None:
+def setup_middlewares(dp: Dispatcher) -> None:
     for middleware in (dp.message, dp.callback_query):
         middleware.outer_middleware(ContextMiddleware())
         middleware.outer_middleware(LoggingMiddleware())
@@ -15,7 +15,7 @@ def setup_middleware(dp: Dispatcher) -> None:
 
 
 __all__ = [
-    "setup_middleware",
+    "setup_middlewares",
     "ContextMiddleware",
     "LoggingMiddleware",
     "DatabaseMiddleware",
