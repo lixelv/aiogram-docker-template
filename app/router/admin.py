@@ -38,3 +38,9 @@ async def unban(message: Message, state: FSMContext):
 @router.message(Command("users"), IsAdmin())
 async def users(message: Message, db: PostgresDB):
     return message.reply("Users:", reply_markup=await create_users_keyboard(db))
+
+
+@router.message(Command("find_user"), IsAdmin())
+async def find_user(message: Message, state: FSMContext):
+    await state.set_state(AdminStates.find_user)
+    return message.reply("Enter username or id:")

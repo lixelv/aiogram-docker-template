@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from typing import Optional
 
 from .pagination import with_pagination
 from database import PostgresDB, User
@@ -33,25 +34,25 @@ async def create_users_keyboard(db: PostgresDB, page: int = 0):
 
 class BanUserCallback(CallbackData, prefix="BanUserCallback"):
     user_id: int
-    page: int
+    page: Optional[int]
 
 
 class UnbanUserCallback(CallbackData, prefix="UnbanUserCallback"):
     user_id: int
-    page: int
+    page: Optional[int]
 
 
 class RemoveAdminCallback(CallbackData, prefix="RemoveAdminCallback"):
     user_id: int
-    page: int
+    page: Optional[int]
 
 
 class AddAdminCallback(CallbackData, prefix="AddAdminCallback"):
     user_id: int
-    page: int
+    page: Optional[int]
 
 
-def create_user_keyboard(user: User, is_owner: bool, page: int = 0):
+def create_user_keyboard(user: User, is_owner: bool, page: int = None):
     builder = InlineKeyboardBuilder()
 
     if is_owner:
@@ -78,9 +79,13 @@ def create_user_keyboard(user: User, is_owner: bool, page: int = 0):
         )
 
     builder.adjust(2)  # Set width to 2 buttons per row
-    builder.row(
-        InlineKeyboardButton(
-            text="Back", callback_data=SelectUserPaginationCallback(page=page).pack()
+
+    if page is not None:
+        builder.row(
+            InlineKeyboardButton(
+                text="Back",
+                callback_data=SelectUserPaginationCallback(page=page).pack(),
+            )
         )
-    )
+
     return builder.as_markup()

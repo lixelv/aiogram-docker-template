@@ -30,6 +30,17 @@ class UserMethods(PostgresConnectionWithContext):
         query = "SELECT * FROM users WHERE username=$1"
         return await self.fetch_one(query, (username,), User)
 
+    async def get_user_by_id_or_username(self, user_id_or_username: str):
+        if user_id_or_username.isnumeric():
+            user = await self.get_user_by_id(int(user_id_or_username))
+
+            if user is None:
+                return await self.get_user_by_username(user_id_or_username)
+            else:
+                return user
+        else:
+            return await self.get_user_by_username(user_id_or_username)
+
     # Using index system (0 is the first element)
     async def get_all_users(self, limit, offset) -> Optional[List[User]]:
         offset = offset * limit

@@ -6,6 +6,7 @@ from core import OWNER_ID
 from fsm import AdminStates, OwnerStates
 from database import PostgresDB
 from filter import IsAdmin, IsOwner
+from keyboard_ import create_user_keyboard
 
 router = Router()
 
@@ -19,7 +20,7 @@ async def get_user_by_id_or_username(db: PostgresDB, user_id_or_username: str):
 
 @router.message(F.text, OwnerStates.add_admin, IsOwner())
 async def add_admin(message: Message, db: PostgresDB, state: FSMContext):
-    user = await get_user_by_id_or_username(db, message.text)
+    user = await db.get_user_by_id_or_username(message.text)
 
     if user is None:
         return await message.reply("User not found!")
@@ -33,7 +34,7 @@ async def add_admin(message: Message, db: PostgresDB, state: FSMContext):
 
 @router.message(F.text, OwnerStates.remove_admin, IsOwner())
 async def remove_admin(message: Message, db: PostgresDB, state: FSMContext):
-    user = await get_user_by_id_or_username(db, message.text)
+    user = await db.get_user_by_id_or_username(message.text)
 
     if user is None:
         return await message.reply("User not found!")
@@ -47,7 +48,7 @@ async def remove_admin(message: Message, db: PostgresDB, state: FSMContext):
 
 @router.message(F.text, AdminStates.ban_user, IsAdmin())
 async def ban(message: Message, db: PostgresDB, state: FSMContext):
-    user = await get_user_by_id_or_username(db, message.text)
+    user = await db.get_user_by_id_or_username(message.text)
 
     if user is None:
         return await message.reply("User not found!")
@@ -63,7 +64,7 @@ async def ban(message: Message, db: PostgresDB, state: FSMContext):
 
 @router.message(F.text, AdminStates.unban_user, IsAdmin())
 async def unban(message: Message, db: PostgresDB, state: FSMContext):
-    user = await get_user_by_id_or_username(db, message.text)
+    user = await db.get_user_by_id_or_username(message.text)
 
     if user is None:
         return await message.reply("User not found!")
@@ -73,3 +74,20 @@ async def unban(message: Message, db: PostgresDB, state: FSMContext):
     await db.update_user_is_banned(user.id, False)
     await state.clear()
     return await message.reply("User unbanned!")
+
+
+@router.message(F.text, AdminStates.find_user, IsAdmin())
+async def find_user(message: Message, db: PostgresDB, state: FSMContext):
+    user_id_or_username = message.text
+    user = await db.get_user_by_id_or_username(user_id_or_username)
+
+    requesting_user = await db.get_user()
+    is_owner = requesting_user.id == OWNER_ID
+
+    if (user.is_admin and requesting_user.id != OWNER_ID) or user.id == OWNER_ID:
+        return await message.answer("You can't select this user, he is admin!")
+
+    keyboard = create_user_keyboard(user, is_owner)
+
+    state.clear()
+    return await message.answer(repr(user), reply_markup=keyboard)

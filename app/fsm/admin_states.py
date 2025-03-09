@@ -7,5 +7,6 @@ class OwnerStates(StatesGroup):
 
 
 class AdminStates(StatesGroup):
+    find_user = State()
     ban_user = State()
     unban_user = State()
