@@ -11,13 +11,6 @@ from keyboards import create_user_keyboard
 router = Router()
 
 
-async def get_user_by_id_or_username(db: PostgresDB, user_id_or_username: str):
-    if user_id_or_username.isnumeric():
-        return await db.get_user_by_id(int(user_id_or_username))
-    else:
-        return await db.get_user_by_username(user_id_or_username)
-
-
 @router.message(F.text, OwnerStates.add_admin, IsOwner())
 async def add_admin(message: Message, db: PostgresDB, state: FSMContext):
     user = await db.get_user_by_id_or_username(message.text)
