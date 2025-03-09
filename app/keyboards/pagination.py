@@ -4,10 +4,13 @@ from typing import Callable, Any
 
 from database import PostgresDB
 
-
-# async def users_offset(self, offset: int) -> int: Example of offset_method to put in with_pagination decorator
+# Example of offset_method to put in with_pagination decorator
+#
+# async def users_offset(self, offset: int) -> int:
 #     query = "SELECT EXISTS(SELECT 1 FROM users LIMIT 1 OFFSET $1)"
 #     return await self.fetch_one(query, (offset,))
+
+
 def with_pagination(
     offset_method: Callable,
     items_per_page: int,

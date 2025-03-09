@@ -17,6 +17,7 @@ jobs:
                   REPO_NAME=$(basename ${{ github.repository }})
                   echo "APP_NAME=$REPO_NAME" >> .env
                   echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+                  echo "LOGFIRE_TOKEN=\"${{ secrets.LOGFIRE_TOKEN }}\"" >> .env
                   echo "POSTGRES_HOST=\"${{ secrets.POSTGRES_HOST }}\"" >> .env
                   echo "POSTGRES_PORT=\"${{ secrets.POSTGRES_PORT }}\"" >> .env
                   echo "POSTGRES_USER=\"${{ secrets.POSTGRES_USER }}\"" >> .env
