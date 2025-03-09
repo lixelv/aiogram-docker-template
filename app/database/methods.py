@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 
 from .context import PostgresConnectionWithContext
 from .models import User
@@ -21,12 +21,6 @@ class UserMethods(PostgresConnectionWithContext):
     async def get_user(self) -> Optional[User]:
         query = "SELECT * FROM users WHERE id=$1"
         return await self.fetch_one(query, (self.context.user.id,), User)
-
-    # Using index system (0 is the first element)
-    async def get_all_users(self, limit, page) -> Optional[List[User]]:
-        offset = page * limit
-        query = "SELECT * FROM users LIMIT $1 OFFSET $2"
-        return await self.fetch_all(query, (limit, offset), User)
 
 
 class PostgresDB(UserMethods):

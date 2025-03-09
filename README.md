@@ -56,14 +56,14 @@ The template supports three deployment modes:
     - In name write `production` and continue
     - In environment secrets write:
         - `TELEGRAM_BOT_TOKEN`: Your bot token, get it from [@BotFather](https://t.me/BotFather)
+        - `LOGFIRE_TOKEN`: Optional, adding web logging on logfire, get it here: https://logfire.pydantic.dev/
         - `POSTGRES_HOST`: Postgres host, if using local profile set here `db`
         - `POSTGRES_PORT`: 5432 by default, but if you already have postgres container you can set it to `5433`, or use `default` deploy_mode
         - `POSTGRES_USER`: User for postgres database
         - `POSTGRES_PASSWORD`: Password for postgres database
         - `POSTGRES_DB`: Database name
         - `DEPLOY_MODE`: `default`, `local` or `dev`
-        - `OWNER_ID`: Your telegram account id, get it from [@userinfobot](https://t.me/userinfobot)
-    - All variables are required!
+    - All variables are required (except LOGFIRE_TOKEN)!
 
 4. Deploy your bot:
 
