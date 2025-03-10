@@ -1,3 +1,3 @@
-from .phrases import lexicon
+from .phrases import lexicon, get_lexicon
 
-__all__ = ["lexicon"]
+__all__ = ["lexicon", "get_lexicon"]

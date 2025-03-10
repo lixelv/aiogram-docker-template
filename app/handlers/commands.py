@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from database import PostgresDB
-from lexicon import lexicon
+from lexicon import get_lexicon
 
 router = Router()
 
@@ -11,11 +11,8 @@ router = Router()
 @router.message(Command("start"))
 async def start(message: Message, db: PostgresDB):
     user = await db.get_user()
-    current_lexicon = lexicon["start"]
 
-    return await message.reply(
-        current_lexicon.get(user.language_code) or current_lexicon["en"]
-    )
+    return await message.reply(get_lexicon("start", user.language_code))
 
 
 @router.message(Command("help"))
