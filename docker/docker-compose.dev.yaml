@@ -19,6 +19,16 @@ services:
         restart: unless-stopped
         tty: true
 
+    dev:
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile.dev.env
+        container_name: dev-${APP_NAME:-PWD##*/}-dev
+        volumes:
+            - dev-files:/app
+        tty: true
+        stdin_open: true
+
     db:
         image: postgres:16
         container_name: dev-${APP_NAME:-PWD##*/}-postgres-db
@@ -47,16 +57,6 @@ services:
 
         restart: unless-stopped
         tty: true
-
-    dev:
-        build:
-            context: ..
-            dockerfile: docker/Dockerfile.dev.env
-        container_name: dev-${APP_NAME:-PWD##*/}-dev
-        volumes:
-            - dev-files:/app # Монтируем тот же том, куда и app
-        tty: true
-        stdin_open: true # Для интерактивного режима
 
 volumes:
     dev-files:
