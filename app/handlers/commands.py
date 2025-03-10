@@ -11,7 +11,6 @@ router = Router()
 @router.message(Command("start"))
 async def start(message: Message, db: PostgresDB):
     user = await db.get_user()
-
     return await message.reply(get_lexicon("start", user.language_code))
 
 
