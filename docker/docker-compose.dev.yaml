@@ -4,7 +4,7 @@ services:
     app:
         build:
             context: ..
-            dockerfile: docker/Dockerfile.dev.app
+            dockerfile: docker/Dockerfile.dev
         container_name: dev-${APP_NAME:-PWD##*/}-app
         env_file: ../.env
         environment:
@@ -51,7 +51,7 @@ services:
     dev:
         build:
             context: ..
-            dockerfile: docker/Dockerfile.dev
+            dockerfile: docker/Dockerfile.dev.env
         container_name: dev-${APP_NAME:-PWD##*/}-dev
         volumes:
             - dev-files:/app # Монтируем тот же том, куда и app

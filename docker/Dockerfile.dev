@@ -1,27 +1,18 @@
 FROM python:3.12-slim
 
-# Update current packages
-RUN apt-get update
+WORKDIR /app
 
-# Installing git
-RUN apt-get install -y git
-
-# Configuring git
-RUN git config --global core.autocrlf input
-RUN git config --global user.email "simeongfremenko@gmail.com"
-RUN git config --global user.name "lixelv"
+# Install watcheagle
+RUN pip install watchdog[watchmedo]
 
 # Copy requirements first to leverage Docker cache
 COPY app/requirements.txt requirements.txt
 
 # Install dependencies with caching
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy the rest of the application
 COPY . /app
 
-WORKDIR /app
-
-# Installing latest version of repo
-RUN git pull
-
+# Run the bot when the container launches
+ENTRYPOINT watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM python app/main.py

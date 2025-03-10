@@ -15,18 +15,13 @@ A production-ready template for telegram bots using Aiogram 3.x and docker compo
 
 The template supports three deployment modes:
 
-1. **Default Mode** (`DEPLOY_MODE="default"`)
-
-    - Uses an existing PostgreSQL database
-    - Suitable for production with managed databases
-
-2. **Local Mode** (`DEPLOY_MODE="local"`)
+1. **Local Mode** (`DEPLOY_MODE="prod"`)
 
     - Creates a new PostgreSQL container
     - Perfect for fast deploy and testing
     - Includes database persistence
 
-3. **Development Mode** (`DEPLOY_MODE="dev"`)
+2. **Development Mode** (`DEPLOY_MODE="dev"`)
     - Similar to local mode but optimized for development
     - Includes hot-reload capabilities
     - Best for active development
@@ -62,7 +57,7 @@ The template supports three deployment modes:
         - `POSTGRES_USER`: User for postgres database
         - `POSTGRES_PASSWORD`: Password for postgres database
         - `POSTGRES_DB`: Database name
-        - `DEPLOY_MODE`: `default`, `local` or `dev`
+        - `DEPLOY_MODE`: `prod` or `dev`
     - All variables are required (except LOGFIRE_TOKEN)!
 
 4. Deploy your bot:
