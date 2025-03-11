@@ -60,7 +60,7 @@ services:
 
     redis:
         image: redis:7.4.2-alpine
-        container_name: ${APP_NAME:-PWD##*/}-redis-db
+        container_name: dev-${APP_NAME:-PWD##*/}-redis-db
         command: >
             redis-server
             --requirepass ${REDIS_PASSWORD}
@@ -72,7 +72,7 @@ services:
         expose:
             - "${REDIS_PORT:-6379}:6379"
         volumes:
-            - redis-data:/data
+            - dev-redis-data:/data
         environment:
             - REDIS_PASSWORD=${REDIS_PASSWORD}
         healthcheck:
