@@ -1,4 +1,7 @@
-lexicon = {"start": {"ru": "Привет!", "en": "Hello!"}}
+lexicon = {
+    "start": {"ru": "Привет!", "en": "Hello!"},
+    "test": {"ru": "Привет, напиши что-то!", "en": "Hello, write something!"},
+}
 
 
 def get_lexicon(command: str, language_code: str):
