@@ -16,10 +16,6 @@ DATABASE_CONFIG = {
 
 REDIS_CONFIG = {
     "host": os.getenv("REDIS_HOST"),
-<<<<<<< HEAD
     "port": int(os.getenv("REDIS_PORT")),
-=======
-    "port": os.getenv("REDIS_PORT"),
->>>>>>> 61d6c2f (Added redis, not tested yet)
     "password": os.getenv("REDIS_PASSWORD"),
 }
