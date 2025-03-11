@@ -1,5 +1,5 @@
 from aiogram.fsm.storage.redis import RedisStorage
-from redis.client import Redis
+from redis.asyncio.client import Redis
 
 from core import REDIS_CONFIG
 
