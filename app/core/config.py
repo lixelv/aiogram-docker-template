@@ -13,3 +13,9 @@ DATABASE_CONFIG = {
     "password": os.getenv("POSTGRES_PASSWORD"),
     "database": os.getenv("POSTGRES_DB"),
 }
+
+REDIS_CONFIG = {
+    "host": os.getenv("REDIS_HOST"),
+    "port": os.getenv("REDIS_PORT"),
+    "password": os.getenv("REDIS_PASSWORD"),
+}

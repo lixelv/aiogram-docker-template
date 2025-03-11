@@ -48,8 +48,32 @@ services:
         restart: unless-stopped
         tty: true
 
+    redis:
+        image: redis:7.4.2-alpine
+        container_name: ${APP_NAME:-PWD##*/}-redis-db
+        command: redis-server --requirepass ${REDIS_PASSWORD} --save 20 1 --loglevel warning
+        ports:
+            - "${REDIS_PORT:-6379}:6379"
+        expose:
+            - "${REDIS_PORT:-6379}:6379"
+        volumes:
+            - ./redisdata:/data
+        environment:
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+        healthcheck:
+            test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+
+        restart: unless-stopped
+        tty: true
+        stdin_open: true
+
 volumes:
     files:
         name: ${APP_NAME:-PWD##*/}-files
     postgres-data:
         name: ${APP_NAME:-PWD##*/}-postgres-data
+    redis-data:
+        name: ${APP_NAME:-PWD##*/}-redis-data

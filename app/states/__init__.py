@@ -1,4 +1,3 @@
-from aiogram.fsm.storage.memory import MemoryStorage
+from .memory import storage
 
-storage = MemoryStorage()
 __all__ = ["storage"]
