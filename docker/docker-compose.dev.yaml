@@ -61,18 +61,26 @@ services:
     redis:
         image: redis:7.4.2-alpine
         container_name: ${APP_NAME:-PWD##*/}-redis-db
+<<<<<<< HEAD
         command: >
             redis-server
             --requirepass ${REDIS_PASSWORD}
             --save 20 1
             --loglevel warning
             --port ${REDIS_PORT:-6379}
+=======
+        command: redis-server --requirepass ${REDIS_PASSWORD} --save 20 1 --loglevel warning
+>>>>>>> 61d6c2f (Added redis, not tested yet)
         ports:
             - "${REDIS_PORT:-6379}:6379"
         expose:
             - "${REDIS_PORT:-6379}:6379"
         volumes:
+<<<<<<< HEAD
             - redis-data:/data
+=======
+            - ./redisdata:/data
+>>>>>>> 61d6c2f (Added redis, not tested yet)
         environment:
             - REDIS_PASSWORD=${REDIS_PASSWORD}
         healthcheck:
