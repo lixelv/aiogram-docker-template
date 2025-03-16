@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 # Run the bot when the container launches
-CMD ["python", "app/main.py"]
+CMD ["python", "app/bot.py"]

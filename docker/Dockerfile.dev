@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 # Run the bot when the container launches
-ENTRYPOINT watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM python app/main.py
+ENTRYPOINT watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM python app/bot.py
