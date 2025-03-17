@@ -10,7 +10,7 @@ def get_lexicon(command: str, language_code: str, *args, **kwargs) -> str:
     current_lexicon = lexicon[command]
     result = current_lexicon.get(language_code) or current_lexicon["en"]
 
-    return markdownify(result.format(*args, **kwargs))
+    return markdownify(result.format(*args, **kwargs)) or "None"
 
 
 class Lexicon:
