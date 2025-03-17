@@ -1,5 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 
 from core import setup_logging, TELEGRAM_BOT_TOKEN, DATABASE_CONFIG
 from middlewares import setup_middlewares
@@ -10,7 +11,9 @@ from states import storage
 setup_logging()
 
 # Initialize bot and dispatcher
-bot = Bot(token=TELEGRAM_BOT_TOKEN)
+bot = Bot(
+    token=TELEGRAM_BOT_TOKEN, default=DefaultBotProperties(parse_mode="MarkdownV2")
+)
 dp = Dispatcher(storage=storage)
 
 # Setup dp

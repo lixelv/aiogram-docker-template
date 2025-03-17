@@ -7,5 +7,5 @@ class User(BaseModel):
     id: int
     username: Optional[str]
     full_name: Optional[str]
-    language_code: Optional[str]
+    language_code: str
     timestamp: datetime

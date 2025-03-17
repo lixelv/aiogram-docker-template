@@ -2,6 +2,6 @@ CREATE TABLE IF NOT EXISTS users (
     id BIGINT PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
     full_name VARCHAR(255),
-    language_code VARCHAR(255) DEFAULT 'en',
+    language_code VARCHAR(2) DEFAULT 'en',
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

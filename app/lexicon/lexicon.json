@@ -1,0 +1,9 @@
+{
+    "start": {
+        "ru": "Привет!",
+        "en": "Hello!"
+    },
+    "special:empty": {
+        "en": "{}"
+    }
+}

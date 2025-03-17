@@ -1,11 +1,11 @@
 name: dev-${APP_NAME:-PWD##*/}
 
 services:
-    app:
+    bot:
         build:
             context: ..
-            dockerfile: docker/Dockerfile.dev
-        container_name: dev-${APP_NAME:-PWD##*/}-app
+            dockerfile: docker/Dockerfile.dev.bot
+        container_name: dev-${APP_NAME:-PWD##*/}-bot
         env_file: ../.env
         environment:
             - POSTGRES_HOST=${POSTGRES_HOST:-db}
@@ -14,7 +14,8 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - dev-files:/app
+            - dev-app:/app
+            - dev-files:/files
 
         restart: unless-stopped
         tty: true
@@ -25,7 +26,7 @@ services:
             dockerfile: docker/Dockerfile.dev.env
         container_name: dev-${APP_NAME:-PWD##*/}-dev
         volumes:
-            - dev-files:/app
+            - dev-app:/app
         tty: true
         stdin_open: true
 
@@ -68,9 +69,9 @@ services:
             --loglevel warning
             --port ${REDIS_PORT:-6379}
         ports:
-            - "${REDIS_PORT:-6379}:6379"
+            - "${REDIS_PORT:-6379}:${REDIS_PORT:-6379}"
         expose:
-            - "${REDIS_PORT:-6379}:6379"
+            - "${REDIS_PORT:-6379}:${REDIS_PORT:-6379}"
         volumes:
             - dev-redis-data:/data
         environment:
@@ -86,6 +87,8 @@ services:
         stdin_open: true
 
 volumes:
+    dev-app:
+        name: dev-${APP_NAME:-PWD##*/}-app
     dev-files:
         name: dev-${APP_NAME:-PWD##*/}-files
     dev-postgres-data:

@@ -35,6 +35,7 @@ Pygments==2.19.1
 requests==2.32.3
 redis==5.2.1
 rich==13.9.4
+telegramify_markdown==0.5.0
 typing_extensions==4.12.2
 urllib3==2.3.0
 wrapt==1.17.2
