@@ -5,7 +5,10 @@ from .config import LOGFIRE_TOKEN
 
 
 def setup_logging():
-    logfire.configure(send_to_logfire=bool(LOGFIRE_TOKEN))
+    logfire.configure(
+        send_to_logfire=bool(LOGFIRE_TOKEN),
+        token=LOGFIRE_TOKEN
+    )
 
     logging.getLogger("aiogram.dispatcher").setLevel(logging.INFO)
     logging.basicConfig(handlers=[logfire.LogfireLoggingHandler()])

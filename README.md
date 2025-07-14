@@ -16,7 +16,6 @@ A production-ready template for telegram bots using Aiogram 3.x and docker compo
 The template supports three deployment modes:
 
 1. **Local Mode** (`DEPLOY_MODE="prod"`)
-
     - Creates a new PostgreSQL container
     - Perfect for fast deploy and testing
     - Includes database persistence
@@ -63,8 +62,13 @@ The template supports three deployment modes:
         - `DEPLOY_MODE`: `prod` or `dev`
     - All variables are required (except LOGFIRE_TOKEN)!
 
-4. Deploy your bot:
+5. Develop your bot:
+    - Firstly edit `.env.example` file and rename it to `.env`
+    - Run `docker-compose -f docker/docker-compose.dev.yaml --env-file .env up --build`
+    - Goto `-dev` container and open bot logs below
+    - Develop your bot
 
+6. Deploy your bot:
     - Goto https://github.com/your_username/your_repo/actions/workflows/deploy.yml (change `your_username` on your github username and `your_repo` on repo_name, created from this template)
     - Press Run workflow and start your bot! This workflow will be triggered any time you push any code to `main`.
 
